@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Crible d'Ératosthène</title>
+    <link rel="stylesheet" href="ERASTHOTHENE.css" />
+    <video autoplay muted loop id="bg-video">
+    <source src="VI.mp4" type="video/mp4"></video>
+</video>
+</head>
+<body>
+    <section>
+    <h1>Crible d'Ératosthène</h1>
+
+    <div class="input-box">
+        <input 
+        type="number" 
+        id="limit" 
+        placeholder="Entrer un nombre n" /><br>
+    </div>
+
+    <button onclick="generate()">Générer</button>
+
+    <div id="resultat"></div>
+
+    <div id="table-container" style="overflow: auto; max-height: 500px; max-width: 100%;"></div>
+
+    
+
+    <script>
+        function generate() {
+            const n = parseInt(document.getElementById("limit").value);
+            if (isNaN(n) || n < 2) {
+                alert("Veuillez entrer un nombre ≥ 2");
+                return;
+            }
+            let tableContainer = document.getElementById("table-container");
+            tableContainer.innerHTML = "";
+
+            // Créer tableau
+            let table = document.createElement("table");
+            let row;
+
+            // Initialisation
+            let numbers = [];
+            for (let i = 1; i <= n; i++) numbers.push(i);
+
+            // Affichage initial
+            for (let i = 0; i < numbers.length; i++) {
+                if (i % 10 === 0) row = document.createElement("tr");
+
+                let cell = document.createElement("td");
+                cell.textContent = numbers[i];
+                cell.id = "cell-" + numbers[i];
+                row.appendChild(cell);
+
+                if (i % 10 === 9) table.appendChild(row);
+            }
+            table.appendChild(row);
+            tableContainer.appendChild(table);
+
+            // Crible d'Ératosthène
+            let prime = Array(n + 1).fill(true);
+            prime[0] = prime[1] = false;
+
+            for (let p = 2; p * p <= n; p++) {
+                if (prime[p]) {
+                    for (let multiple = p * p; multiple <= n; multiple += p) {
+                        prime[multiple] = false;
+                        document.getElementById("cell-" + multiple).classList.add("not-prime");
+                    }
+                }
+            }
+
+            // Colorier en vert les nombres premiers
+            for (let i = 2; i <= n; i++) {
+                if (prime[i]) {
+                    document.getElementById("cell-" + i).classList.add("prime");
+                }
+            }
+        
+            // Créer la liste des nombres premiers
+                  let primesList = [];
+           for (let i = 2; i <= n; i++) {
+           if (prime[i]) primesList.push(i);
+           }
+
+            // Limiter l'affichage à 100 nombres premiers dans la barre verte
+    let displayPrimes = primesList.slice(0, 100).join(", ");
+    if (primesList.length > 100) displayPrimes += ", …";
+
+    // Affichage dans la barre verte
+    const resultatDiv = document.getElementById("resultat");
+    resultatDiv.innerHTML = "Nombres premiers : " + displayPrimes;
+
+    // Générer le tableau uniquement si n < 1000
+if (n < 1000) {
+    let table = document.createElement("table");
+    let row;
+    for (let i = 1; i <= n; i++) {
+        // Créer une nouvelle ligne tous les 10 nombres
+        if ((i - 1) % 10 === 0) row = document.createElement("tr");
+
+        let cell = document.createElement("td");
+        cell.textContent = i;
+        cell.id = "cell-" + i;
+
+        // Appliquer la classe selon si c'est premier ou pas
+        if (prime[i]) {
+            cell.className = "prime";      // utiliser className pour être sûr
+        } else {
+            cell.className = "not-prime";
+        }
+
+        row.appendChild(cell);
+
+        // Ajouter la ligne à la table tous les 10 nombres
+        if (i % 10 === 0) table.appendChild(row);
+    }
+    // Ajouter la dernière ligne si n n'est pas multiple de 10
+    if (n % 10 !== 0) table.appendChild(row);
+
+    tableContainer.appendChild(table);
+}
+
+}
+         
+         
+    </script>
+    </section>
+</body>
+</html>
